@@ -136,16 +136,16 @@ class BaseRowCls(object):
 			return True
 		return False
 
-	def session_has_create_access(self, session):
+	def session_has_create_access(self, session): # pylint: disable=no-self-use
 		return True
 
-	def session_has_delete_access(self, session):
+	def session_has_delete_access(self, session): # pylint: disable=no-self-use
 		return True
 
-	def session_has_read_access(self, session):
+	def session_has_read_access(self, session): # pylint: disable=no-self-use
 		return True
 
-	def session_has_update_access(self, session):
+	def session_has_update_access(self, session): # pylint: disable=no-self-use
 		return True
 Base = sqlalchemy.ext.declarative.declarative_base(cls=BaseRowCls)
 metadata = Base.metadata
@@ -333,10 +333,10 @@ class User(Base):
 	alert_subscriptions = sqlalchemy.orm.relationship('AlertSubscription', backref='user', cascade='all, delete-orphan')
 	campaigns = sqlalchemy.orm.relationship('Campaign', backref='user', cascade='all, delete-orphan')
 
-	def session_has_create_access(self, session):
+	def session_has_create_access(self, session): # pylint: disable=no-self-use
 		return False
 
-	def session_has_delete_access(self, session):
+	def session_has_delete_access(self, session): # pylint: disable=no-self-use
 		return False
 
 	def session_has_read_access(self, session):

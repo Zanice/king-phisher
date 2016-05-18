@@ -89,11 +89,11 @@ class RPCTerminalAppWindow(gui_utilities.GladeGObject):
 	def signal_menuitem_help_about(self, menuitem):
 		dialogs.AboutDialog(self.application).interact()
 
-	def signal_menuitem_help_api_docs(self, menuitem):
+	def signal_menuitem_help_api_docs(self, menuitem): # pylint: disable=no-self-use
 		rpc_api_docs_url = "http://king-phisher.readthedocs.io/en/{0}/server_api/rpc_api.html".format('latest' if version.version_label in ('alpha', 'beta') else 'stable')
 		utilities.open_uri(rpc_api_docs_url)
 
-	def signal_menuitem_help_wiki(self, menuitem):
+	def signal_menuitem_help_wiki(self, menuitem): # pylint: disable=no-self-use
 		utilities.open_uri('https://github.com/securestate/king-phisher/wiki')
 
 	def signal_window_destroy(self, window):
@@ -180,5 +180,5 @@ class RPCTerminal(object):
 		self.rpc_window.child_pid = child_pid
 		return
 
-	def _child_setup(self, vte_pty):
+	def _child_setup(self, vte_pty): # pylint: disable=no-self-use
 		vte_pty.child_setup()

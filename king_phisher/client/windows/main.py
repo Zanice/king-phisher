@@ -181,10 +181,10 @@ class MainMenuBar(gui_utilities.GladeGObject):
 	def do_help_about(self, _):
 		dialogs.AboutDialog(self.application).interact()
 
-	def do_help_templates(self, _):
+	def do_help_templates(self, _): # pylint: disable=no-self-use
 		utilities.open_uri('https://github.com/securestate/king-phisher-templates')
 
-	def do_help_wiki(self, _):
+	def do_help_wiki(self, _): # pylint: disable=no-self-use
 		utilities.open_uri('https://github.com/securestate/king-phisher/wiki')
 
 class MainAppWindow(_Gtk_ApplicationWindow):

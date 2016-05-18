@@ -231,7 +231,7 @@ class TreeViewManager(object):
 				props['foreground-set'] = True
 			column.set_attributes(cell, **props)
 
-	def signal_button_pressed(self, treeview, event, popup_menu):
+	def signal_button_pressed(self, treeview, event, popup_menu): # pylint: disable=no-self-use
 		if not (event.type == Gdk.EventType.BUTTON_PRESS and event.button == Gdk.BUTTON_SECONDARY):
 			return
 		selection = treeview.get_selection()

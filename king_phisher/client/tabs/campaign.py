@@ -188,7 +188,7 @@ class CampaignViewGenericTableTab(CampaignViewGenericTab):
 		"""
 		raise NotImplementedError()
 
-	def format_cell_data(self, cell_data):
+	def format_cell_data(self, cell_data): # pylint: disable=no-self-use
 		"""
 		This method provides formatting to the individual cell values returned
 		from the :py:meth:`.format_row_data` function. Values are converted into

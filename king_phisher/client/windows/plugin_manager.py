@@ -135,7 +135,7 @@ class PluginManagerWindow(gui_utilities.GladeGObject):
 				"{0} (Load Failed)".format(name)
 			))
 
-	def signal_label_activate_link(self, _, uri):
+	def signal_label_activate_link(self, _, uri): # pylint: disable=no-self-use
 		utilities.open_uri(uri)
 
 	def signal_eventbox_button_press(self, widget, event):

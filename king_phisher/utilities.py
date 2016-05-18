@@ -144,7 +144,7 @@ class Mock(object):
 		return other
 
 	@classmethod
-	def __setattr__(cls, name):
+	def __setattr__(cls, name): # pylint: disable=unexpected-special-method-signature
 		pass
 
 	def __getitem__(self, name):

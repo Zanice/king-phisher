@@ -749,7 +749,7 @@ class CampaignGraphVisitsMap(CampaignGraph):
 			)
 		return
 
-	def _map_set_line_color(self, map_lines, line_color):
+	def _map_set_line_color(self, map_lines, line_color): # pylint: disable=no-self-use
 		for lines, texts in map_lines.values():
 			for line in lines:
 				line.set_color(line_color)
@@ -794,7 +794,7 @@ class CampaignGraphPasswordComplexityPie(CampaignPieGraph):
 		self.graph_pie((ctr[True], ctr[False]), autopct='%1.1f%%', legend_labels=('Complex', 'Not Complex'))
 		return
 
-	def _check_complexity(self, password):
+	def _check_complexity(self, password): # pylint: disable=no-self-use
 		if len(password) < 8:
 			return False
 		met = 0

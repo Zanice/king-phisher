@@ -48,7 +48,7 @@ try:
 	from gi.repository import WebKit2 as WebKitX
 	has_webkit2 = True
 except ImportError:
-	from gi.repository import WebKit as WebKitX
+	from gi.repository import WebKit as WebKitX # pylint: disable=no-name-in-module
 	has_webkit2 = False
 
 if isinstance(Gtk.Widget, utilities.Mock):
@@ -214,7 +214,7 @@ class WebKitHTMLView(_WebKitX_WebView):
 			html_data = file_h.read()
 		self.load_html_data(html_data, html_file)
 
-	def signal_button_pressed(self, _, event):
+	def signal_button_pressed(self, _, event): # pylint: disable=no-self-use
 		if event.button == Gdk.BUTTON_SECONDARY:
 			# disable right click altogether
 			return True

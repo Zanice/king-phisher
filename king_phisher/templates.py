@@ -113,7 +113,7 @@ class TemplateEnvironmentBase(jinja2.Environment):
 		}
 		return std_vars
 
-	def _filter_decode(self, data, encoding):
+	def _filter_decode(self, data, encoding): # pylint: disable=no-self-use
 		if its.py_v3 and isinstance(data, bytes):
 			data = data.decode('utf-8')
 		encoding = encoding.lower()
@@ -132,7 +132,7 @@ class TemplateEnvironmentBase(jinja2.Environment):
 			data = data.decode('utf-8') # pylint: disable=redefined-variable-type
 		return data
 
-	def _filter_encode(self, data, encoding):
+	def _filter_encode(self, data, encoding): # pylint: disable=no-self-use
 		if its.py_v3 and isinstance(data, str):
 			data = data.encode('utf-8')
 		encoding = encoding.lower()
@@ -151,7 +151,7 @@ class TemplateEnvironmentBase(jinja2.Environment):
 			data = data.decode('utf-8')
 		return data
 
-	def _filter_hash(self, data, hash_type):
+	def _filter_hash(self, data, hash_type): # pylint: disable=no-self-use
 		if its.py_v3 and isinstance(data, str):
 			data = data.encode('utf-8')
 		hash_type = hash_type.lower()

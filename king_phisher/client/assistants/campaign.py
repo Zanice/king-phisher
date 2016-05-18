@@ -325,7 +325,7 @@ class CampaignAssistant(gui_utilities.GladeGObject):
 		self._close_ready = True
 		return
 
-	def signal_assistant_cancel(self, assistant):
+	def signal_assistant_cancel(self, assistant): # pylint: disable=no-self-use
 		assistant.destroy()
 
 	def signal_assistant_close(self, assistant):
@@ -345,7 +345,7 @@ class CampaignAssistant(gui_utilities.GladeGObject):
 					combobox.set_active_iter(model_iter)
 					self.gobjects['radiobutton_company_existing'].set_active(True)
 
-	def signal_calendar_prev(self, calendar):
+	def signal_calendar_prev(self, calendar): # pylint: disable=no-self-use
 		today = datetime.date.today()
 		calendar_day = gui_utilities.gtk_calendar_get_pydate(calendar)
 		if calendar_day >= today:

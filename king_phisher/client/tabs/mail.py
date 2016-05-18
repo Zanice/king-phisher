@@ -642,7 +642,7 @@ class MailSenderEditTab(gui_utilities.GladeGObject):
 	def signal_toolbutton_save_as(self, toolbutton):
 		self.save_html_file(force_prompt=True)
 
-	def signal_toolbutton_template_wiki(self, toolbutton):
+	def signal_toolbutton_template_wiki(self, toolbutton): # pylint: disable=no-self-use
 		utilities.open_uri('https://github.com/securestate/king-phisher/wiki/Templates#message-templates')
 
 	def signal_textview_populate_popup(self, textview, menu):
@@ -863,7 +863,7 @@ class MailSenderConfigurationTab(gui_utilities.GladeGObject):
 		entry.set_text(response['target_path'])
 		return True
 
-	def signal_entry_backspace(self, entry):
+	def signal_entry_backspace(self, entry): # pylint: disable=no-self-use
 		entry.set_text('')
 		return True
 

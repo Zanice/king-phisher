@@ -138,7 +138,7 @@ class KingPhisherRequestHandlerRPC(object):
 		self.rpc_handler_map['^/logout$'] = self.rpc_logout
 
 	@log_call
-	def rpc_ping(self):
+	def rpc_ping(self): # pylint: disable=no-self-use
 		"""
 		An RPC method that can be used by clients to assert the status
 		and responsiveness of this server.
@@ -344,7 +344,7 @@ class KingPhisherRequestHandlerRPC(object):
 		session.commit()
 
 	@database_access
-	def rpc_database_count_rows(self, session, table_name, query_filter=None):
+	def rpc_database_count_rows(self, session, table_name, query_filter=None): # pylint: disable=no-self-use
 		"""
 		Get a count of the rows in the specified table where the search
 		criteria matches.
@@ -520,7 +520,7 @@ class KingPhisherRequestHandlerRPC(object):
 		session.commit()
 
 	@log_call
-	def rpc_geoip_lookup(self, ip, lang=None):
+	def rpc_geoip_lookup(self, ip, lang=None): # pylint: disable=no-self-use
 		"""
 		Look up an IP address in the servers GeoIP database. If the IP address
 		can not be found in the database, None will be returned.
@@ -537,7 +537,7 @@ class KingPhisherRequestHandlerRPC(object):
 		return result
 
 	@log_call
-	def rpc_geoip_lookup_multi(self, ips, lang=None):
+	def rpc_geoip_lookup_multi(self, ips, lang=None): # pylint: disable=no-self-use
 		"""
 		Look up multiple IP addresses in the servers GeoIP database. Each IP
 		address that can not be found in the database will have its result set
