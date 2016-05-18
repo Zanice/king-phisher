@@ -1,1 +1,0 @@
-/root/king-phisher-plugins/client/hello_world.py
