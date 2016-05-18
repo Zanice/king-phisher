@@ -29,6 +29,8 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=wrong-import-order
 
 import sys
 import textwrap
@@ -184,7 +186,7 @@ class PluginManagerWindow(gui_utilities.GladeGObject):
 			pm.unload(name)
 			try:
 				klass = pm.load(name, reload_module=True)
-			except Exception as error:
+			except Exception as error: # pylint: disable=broad-except
 				self._on_plugin_load_error(name, error)
 				if name == selected_plugin:
 					self._set_plugin_info(name)

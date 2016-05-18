@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=wildcard-import
 
 from .main import *
 from .rpc_terminal import *

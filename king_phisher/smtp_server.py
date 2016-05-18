@@ -46,12 +46,12 @@ class BaseSMTPServer(smtpd.SMTPServer, object):
 		"""
 		self.logger = logging.getLogger('KingPhisher.SMTPD')
 		super(BaseSMTPServer, self).__init__(localaddr, remoteaddr)
-		self.logger.info("smtp server listening on {0}:{1}".format(localaddr[0], localaddr[1]))
+		self.logger.info("smtp server listening on {0}:{1}".format(localaddr[0], localaddr[1])) # pylint: disable=logging-format-interpolation
 
 	def process_message(self, peer, mailfrom, rcpttos, data):
-		self.logger.info("received message from {0} ({1}) to {2}".format(mailfrom, peer[0], ', '.join(rcpttos)))
+		self.logger.info("received message from {0} ({1}) to {2}".format(mailfrom, peer[0], ', '.join(rcpttos))) # pylint: disable=logging-format-interpolation
 
-	def serve_forever(self):
+	def serve_forever(self): # pylint: disable=no-self-use
 		"""
 		Process requests until a :py:meth:`BaseSMTPServer.shutdown` is called.
 		"""

@@ -29,6 +29,11 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-return-statements
+# pylint: disable=wrong-import-order
 
 import logging
 import re
@@ -177,7 +182,7 @@ class SenderPolicyFramework(object):
 		except SPFTempError:
 			if not top_level:
 				raise
-			answers = []
+			answers = [] # pylint: disable=redefined-variable-type
 		answers = list(answer for answer in answers if isinstance(answer, dns.rdtypes.ANY.TXT.TXT))
 
 		answers = [answer for answer in answers if answer.strings[0].startswith('v=spf1 ')]
@@ -189,30 +194,29 @@ class SenderPolicyFramework(object):
 
 		records = record[7:].split(' ')
 		records = tuple(record for record in records if len(record))
-		self.logger.debug("parsing {0:,} records for domain: {1}".format(len(records), domain))
+		self.logger.debug("parsing {0:,} records for domain: {1}".format(len(records), domain)) # pylint: disable=logging-format-interpolation
 
 		if not len(records):
 			raise SPFPermError('failed to parse spf data')
 
-		for record_id in range(len(records)):
-			record = records[record_id]
+		for record_id,record in enumerate(records):
 			if len(self.spf_records) and self.spf_records[-1][0] == 'all':
 				break
 
 			if record.startswith('redirect='):
 				if len([r for r in records if r.endswith('all')]):
 					# ignore redirects when all is present per https://tools.ietf.org/html/rfc7208#section-6.1
-					self.logger.warning("ignoring redirect modifier to: {0} due to an existing 'all' mechanism".format(domain))
+					self.logger.warning("ignoring redirect modifier to: {0} due to an existing 'all' mechanism".format(domain)) # pylint: disable=logging-format-interpolation
 					continue
 				record = record[9:]
 				domain = self.expand_macros(record, self.ip_address, domain, self.sender)
-				self.logger.debug("following redirect modifier to: {0}".format(domain))
+				self.logger.debug("following redirect modifier to: {0}".format(domain)) # pylint: disable=logging-format-interpolation
 				if top_level and len(self.spf_records) == 0:
 					# treat a single redirect as a new top level
 					return self._check_host(ip, domain, sender, top_level=True)
 				else:
 					result = self._check_host(ip, domain, sender, top_level=False)
-					self.logger.debug("top check found matching spf record from redirect to: {0}".format(domain))
+					self.logger.debug("top check found matching spf record from redirect to: {0}".format(domain)) # pylint: disable=logging-format-interpolation
 					return result
 
 			if ':' in record:
@@ -232,7 +236,7 @@ class SenderPolicyFramework(object):
 				self.spf_records.append((mechanism, qualifier, rvalue))
 			if self._evaluate_mechanism(ip, domain, sender, mechanism, rvalue):
 				self.spf_record_id = record_id
-				self.logger.debug("{0} check found matching spf record: '{1}'".format(('top' if top_level else 'recursive'), record))
+				self.logger.debug("{0} check found matching spf record: '{1}'".format(('top' if top_level else 'recursive'), record)) # pylint: disable=logging-format-interpolation
 				return QUALIFIERS[qualifier]
 
 		self.logger.debug('no records matched, returning default policy of neutral')
@@ -279,7 +283,7 @@ class SenderPolicyFramework(object):
 			try:
 				if its.py_v2 and isinstance(rvalue, str):
 					rvalue = rvalue.decode('utf-8')
-				ip_network = ipaddress.IPv6Network(rvalue, strict=False)
+				ip_network = ipaddress.IPv6Network(rvalue, strict=False) # pylint: disable=redefined-variable-type
 			except ipaddress.AddressValueError:
 				raise SPFPermError('failed to parse spf data')
 			if ip in ip_network:

@@ -29,6 +29,8 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=wrong-import-order
 
 import argparse
 import random
@@ -39,7 +41,7 @@ import dns.resolver
 import smoke_zephyr.utilities
 
 if sys.version_info[0] < 3:
-	from email.MIMEText import MIMEText
+	from email.MIMEText import MIMEText # pylint: disable=import-error,no-name-in-module
 else:
 	from email.mime.text import MIMEText
 

@@ -31,7 +31,9 @@
 #
 
 # disable this warning for the email.mime.* modules that have to be imported
+# pylint: disable=ungrouped-imports
 # pylint: disable=unused-import
+# pylint: disable=wrong-import-order
 
 import codecs
 import collections
@@ -331,7 +333,7 @@ class MailSenderThread(threading.Thread):
 			return ConnectionErrorReason.ERROR_AUTHENTICATION_FAILED
 		except paramiko.SSHException as error:
 			self.logger.warning("failed with ssh exception '{0}'".format(error.message))
-		except Exception:
+		except Exception: # pylint: disable=broad-except
 			self.logger.warning('failed to connect to the remote ssh server', exc_info=True)
 		else:
 			self.smtp_server = self._ssh_forwarder.local_server

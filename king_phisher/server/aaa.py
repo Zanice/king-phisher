@@ -29,6 +29,9 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=too-many-statements
+# pylint: disable=wrong-import-order
 
 import base64
 import contextlib
@@ -433,7 +436,7 @@ class ForkedAuthenticator(object):
 						self.logger.warning("authentication failed for user: {0} reason: lack of group membership".format(username))
 					except KeyError:
 						self.logger.error("encountered a KeyError while looking up group membership for user: {0}".format(username))
-					except Exception:
+					except Exception: # pylint: disable=broad-except
 						self.logger.error("encountered an Exception while looking up group membership for user: {0}".format(username), exc_info=True)
 					else:
 						result['result'] = True

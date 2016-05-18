@@ -29,13 +29,14 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
 
 import re
 
 from docutils import nodes
-from sphinx import addnodes
-from sphinx.util import docfields
-from sphinxcontrib.domaintools import custom_domain
+from sphinx import addnodes # pylint: disable=import-error
+from sphinx.util import docfields # pylint: disable=import-error
+from sphinxcontrib.domaintools import custom_domain # pylint: disable=import-error
 
 http_sig_param_re = re.compile(r'\((?:(?P<type>[^:)]+):)?(?P<name>[\w_]+)\)', re.VERBOSE)
 

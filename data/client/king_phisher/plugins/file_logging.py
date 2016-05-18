@@ -1,0 +1,1 @@
+/root/king-phisher-plugins/client/file_logging.py

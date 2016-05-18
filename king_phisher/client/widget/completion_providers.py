@@ -29,6 +29,8 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=wrong-import-order
 
 import logging
 import os
@@ -201,7 +203,7 @@ class CustomCompletionProviderBase(GObject.GObject, GtkSource.CompletionProvider
 		proposals = []
 		try:
 			matching_suggestions = self.populate(context, match)
-		except Exception:
+		except Exception: # pylint: disable=broad-except
 			self.logger.warning('encountered an exception in the completion populate routine', exc_info=True)
 			return
 		matching_suggestions.sort()

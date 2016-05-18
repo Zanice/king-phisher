@@ -29,6 +29,10 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=too-many-return-statements
+# pylint: disable=too-many-statements
+# pylint: disable=wrong-import-order
 
 import base64
 import binascii
@@ -457,7 +461,7 @@ class KingPhisherRequestHandler(server_rpc.KingPhisherRequestHandlerRPC, Advance
 
 		try:
 			self.handle_page_visit()
-		except Exception as error:
+		except Exception as error: # pylint: disable=broad-except
 			self.server.logger.error('handle_page_visit raised error: {0}.{1}'.format(error.__class__.__module__, error.__class__.__name__), exc_info=True)
 
 		self.end_headers()

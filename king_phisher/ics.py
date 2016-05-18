@@ -29,6 +29,8 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=wrong-import-order
 
 import collections
 import datetime
@@ -140,7 +142,7 @@ def get_tz_posix_env_var(tz_name):
 	if its.py_v3:
 		newline = 0x0a
 	else:
-		newline = '\n'
+		newline = '\n' # pylint: disable=redefined-variable-type
 	while data[end_pos] != newline:
 		end_pos -= 1
 	end_pos += 1
@@ -239,7 +241,7 @@ class Calendar(icalendar.Calendar):
 	An icalendar formatted event for converting to an ICS file and then sending
 	in an email.
 	"""
-	def __init__(self, organizer_email, start, summary, organizer_cn=None, description=None, duration='1h', location=None):
+	def __init__(self, organizer_email, start, summary, organizer_cn=None, description=None, duration='1h', location=None): # pylint: disable=too-many-arguments
 		"""
 		:param str organizer_email: The email of the event organizer.
 		:param start: The start time for the event.

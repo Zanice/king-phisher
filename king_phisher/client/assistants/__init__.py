@@ -30,4 +30,4 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-from .campaign import *
+from .campaign import * # pylint: disable=wildcard-import

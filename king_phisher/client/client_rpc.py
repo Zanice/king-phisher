@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=wrong-import-order
 
 import code
 import logging
@@ -327,7 +328,7 @@ def vte_child_routine(config):
 	config = json_ex.loads(config)
 	try:
 		import readline
-		import rlcompleter  # pylint: disable=unused-variable
+		import rlcompleter
 	except ImportError:
 		pass
 	else:

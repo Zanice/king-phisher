@@ -29,6 +29,8 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=ungrouped-imports
+# pylint: disable=wrong-import-order
 
 import codecs
 import collections
@@ -205,7 +207,7 @@ class WebPageCloner(object):
 
 		try:
 			data = codec.decode(data)[0]
-		except Exception as error:
+		except Exception as error: # pylint: disable=broad-except
 			self.logger.error("failed to decode data from web response ({0}) using encoding {1}".format(error.__class__.__name__, encoding))
 			return data
 

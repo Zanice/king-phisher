@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=wrong-import-order
 
 import distutils.version
 import logging
@@ -185,7 +186,7 @@ class PluginBase(PluginBaseMeta('PluginBaseMeta', (object,), {})):
 		"""
 		pass
 
-	def initialize(self):
+	def initialize(self): # pylint: disable=no-self-use
 		"""
 		This method should be overridden to provide the primary functionality of
 		the plugin. It is called automatically by the manager when the plugin is
@@ -280,7 +281,7 @@ class PluginManagerBase(object):
 		self._lock.acquire()
 		inst = self.enabled_plugins[name]
 		inst.finalize()
-		inst._cleanup()
+		inst._cleanup() # pylint: disable=protected-access
 		del self.enabled_plugins[name]
 		self._lock.release()
 
@@ -310,14 +311,14 @@ class PluginManagerBase(object):
 		klass = getattr(module, 'Plugin', None)
 		if klass is None:
 			self._lock.release()
-			self.logger.warning("failed to load plugin '{0}', Plugin class not found".format(name))
+			self.logger.warning("failed to load plugin '{0}', Plugin class not found".format(name)) # pylint: disable=logging-format-interpolation
 			raise errors.KingPhisherResourceError('the Plugin class is missing')
 		if not issubclass(klass, self._plugin_klass):
 			self._lock.release()
-			self.logger.warning("failed to load plugin '{0}', Plugin class is invalid".format(name))
+			self.logger.warning("failed to load plugin '{0}', Plugin class is invalid".format(name)) # pylint: disable=logging-format-interpolation
 			raise errors.KingPhisherResourceError('the Plugin class is invalid')
 		self.loaded_plugins[name] = klass
-		self.logger.debug("plugin '{0}' has been {1}loaded".format(name, 're' if reload_module else ''))
+		self.logger.debug("plugin '{0}' has been {1}loaded".format(name, 're' if reload_module else '')) # pylint: disable=logging-format-interpolation
 		self._lock.release()
 		return klass
 
@@ -334,11 +335,11 @@ class PluginManagerBase(object):
 		"""
 		self._lock.acquire()
 		plugins = self.plugin_source.list_plugins()
-		self.logger.info("loading {0:,} plugins".format(len(plugins)))
+		self.logger.info("loading {0:,} plugins".format(len(plugins)))# pylint: disable=logging-format-interpolation
 		for name in plugins:
 			try:
 				self.load(name)
-			except Exception as error:
+			except Exception as error: # pylint: disable=broad-except
 				if on_error:
 					on_error(name, error)
 		self._lock.release()
@@ -358,7 +359,7 @@ class PluginManagerBase(object):
 		if name in self.enabled_plugins:
 			self.disable(name)
 		del self.loaded_plugins[name]
-		self.logger.debug("plugin '{0}' has been unloaded".format(name))
+		self.logger.debug("plugin '{0}' has been unloaded".format(name)) # pylint: disable=logging-format-interpolation
 		self._lock.release()
 
 	def unload_all(self):
@@ -367,10 +368,10 @@ class PluginManagerBase(object):
 		plugins are ignored.
 		"""
 		self._lock.acquire()
-		self.logger.info("unloading {0:,} plugins".format(len(self.loaded_plugins)))
+		self.logger.info("unloading {0:,} plugins".format(len(self.loaded_plugins))) # pylint: disable=logging-format-interpolation
 		for name in tuple(self.loaded_plugins.keys()):
 			try:
 				self.unload(name)
-			except Exception:
+			except Exception: # pylint: disable=broad-except
 				pass
 		self._lock.release()
