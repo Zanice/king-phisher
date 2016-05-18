@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=too-many-branches
 # pylint: disable=wrong-import-order
 
 import binascii
@@ -46,7 +47,7 @@ import paramiko
 if sys.version_info[0] < 3:
 	import SocketServer as socketserver
 else:
-	import socketserver
+	import socketserver # pylint: disable=import-error
 
 __all__ = ('SSHTCPForwarder',)
 
@@ -102,7 +103,7 @@ class SSHTCPForwarder(threading.Thread):
 		This is a :py:class:`threading.Thread` object and needs to be started
 		with a call to :py:meth:`~threading.Thread.start` after it is initialized.
 	"""
-	def __init__(self, server, username, password, remote_server, local_port=0, private_key=None, missing_host_key_policy=None):
+	def __init__(self, server, username, password, remote_server, local_port=0, private_key=None, missing_host_key_policy=None): # pylint: disable=too-many-arguments
 		"""
 		:param tuple server: The SSH server to connect to.
 		:param str username: The username to authenticate with.
@@ -163,7 +164,7 @@ class SSHTCPForwarder(threading.Thread):
 			if pkey_type == 'file':
 				file_path = os.path.expandvars(private_key[5:])
 				if not os.access(file_path, os.R_OK):
-					self.logger.warning("the user specified ssh key '{0}' can not be opened".format(file_path))
+					self.logger.warning("the user specified ssh key '{0}' can not be opened".format(file_path)) # pylint: disable=logging-format-interpolation
 					return
 				file_h = open(file_path, 'r')
 				first_line = file_h.readline()
@@ -178,13 +179,13 @@ class SSHTCPForwarder(threading.Thread):
 			elif 'BEGIN RSA PRIVATE KEY' in first_line:
 				KeyKlass = paramiko.RSAKey
 			else:
-				self.logger.warning("the user specified ssh key '{0}' does not appear to be a valid dsa or rsa private key".format(file_path))
+				self.logger.warning("the user specified ssh key '{0}' does not appear to be a valid dsa or rsa private key".format(file_path)) # pylint: disable=logging-format-interpolation
 				file_h.close()
 				return
 			try:
 				private_key = KeyKlass.from_private_key(file_h)
 			except paramiko.PasswordRequiredException:
-				self.logger.warning("the user specified ssh key '{0}' is encrypted and requires a password".format(file_path))
+				self.logger.warning("the user specified ssh key '{0}' is encrypted and requires a password".format(file_path)) # pylint: disable=logging-format-interpolation
 				raise
 			finally:
 				file_h.close()
@@ -200,7 +201,7 @@ class SSHTCPForwarder(threading.Thread):
 			algorithm = 'md5'
 			private_key = private_key.replace(':', '')
 			private_key = binascii.a2b_hex(private_key)
-		private_key = tuple(key for key in agent_keys if hashlib.new(algorithm, key.blob).digest() == private_key)
+		private_key = tuple(key for key in agent_keys if hashlib.new(algorithm, key.blob).digest() == private_key) # pylint: disable=redefined-variable-type
 		if len(private_key) == 1:
 			private_key = private_key[0]
 		else:
@@ -234,11 +235,11 @@ class SSHTCPForwarder(threading.Thread):
 	def start(self):
 		super(SSHTCPForwarder, self).start()
 		time.sleep(0.5)
-		self.logger.info("started ssh port forwarding to the remote server ({0})".format(str(self)))
+		self.logger.info("started ssh port forwarding to the remote server ({0})".format(str(self))) # pylint: disable=logging-format-interpolation
 
 	def stop(self):
 		if isinstance(self._forward_server, ForwardServer):
 			self._forward_server.shutdown()
 			self.join()
 		self.client.close()
-		self.logger.info("stopped ssh port forwarding to the remote server ({0})".format(str(self)))
+		self.logger.info("stopped ssh port forwarding to the remote server ({0})".format(str(self))) # pylint: disable=logging-format-interpolation

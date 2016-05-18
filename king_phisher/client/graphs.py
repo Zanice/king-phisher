@@ -29,6 +29,8 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=wrong-import-order
 
 import collections
@@ -511,7 +513,7 @@ class CampaignGraphDepartmentComparison(CampaignBarGraph):
 
 		department_scores = dict((department, (department_visits[department] / total) * 100) for department, total in department_totals.items())
 		department_scores = sorted(department_scores.items(), key=lambda x: (x[1], x[0]), reverse=True)
-		department_scores = collections.OrderedDict(department_scores)
+		department_scores = collections.OrderedDict(department_scores) # pylint: disable=redefined-variable-type
 
 		yticklabels, bars = zip(*department_scores.items())
 		self.graph_bar(bars, len(yticklabels), yticklabels)

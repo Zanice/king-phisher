@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
 # pylint: disable=wrong-import-order
 
 import codecs
@@ -231,16 +232,16 @@ def message_data_from_kpm(target_file, dest_dir, encoding='utf-8'):
 			with open(file_path, 'wb') as file_h:
 				shutil.copyfileobj(arcfile_h, file_h)
 			attachments.append(file_path)
-		logger.debug("extracted {0} attachment file{1} from the archive".format(len(attachments), 's' if len(attachments) > 1 else ''))
+		logger.debug("extracted {0} attachment file{1} from the archive".format(len(attachments), 's' if len(attachments) > 1 else '')) # pylint: disable=logging-format-interpolation
 
 	for config_name, file_name in KPM_ARCHIVE_FILES.items():
 		if not file_name in kpm.file_names:
 			if config_name in message_config:
-				logger.warning("the kpm archive is missing the {0} file".format(file_name))
+				logger.warning("the kpm archive is missing the {0} file".format(file_name)) # pylint: disable=logging-format-interpolation
 				raise KingPhisherInputValidationError('data is missing from the message archive')
 			continue
 		if not message_config.get(config_name):
-			logger.warning("the kpm message configuration is missing the {0} setting".format(config_name))
+			logger.warning("the kpm message configuration is missing the {0} setting".format(config_name)) # pylint: disable=logging-format-interpolation
 			raise KingPhisherInputValidationError('data is missing from the message archive')
 		arcfile_h = kpm.get_file(file_name)
 		file_path = os.path.join(dest_dir, message_config[config_name])
@@ -280,7 +281,7 @@ def message_data_to_kpm(message_config, target_file, encoding='utf-8'):
 			message_config[config_name] = os.path.basename(message_config[config_name])
 			continue
 		if len(message_config.get(config_name, '')):
-			logger.info("the specified {0} '{1}' is not readable, the setting will be removed".format(config_name, message_config[config_name]))
+			logger.info("the specified {0} '{1}' is not readable, the setting will be removed".format(config_name, message_config[config_name])) # pylint: disable=logging-format-interpolation
 		if config_name in message_config:
 			del message_config[config_name]
 
@@ -289,14 +290,14 @@ def message_data_to_kpm(message_config, target_file, encoding='utf-8'):
 			template = file_h.read()
 		message_config['html_file'] = os.path.basename(message_config['html_file'])
 		template, attachments = message_template_to_kpm(template)
-		logger.debug("identified {0} attachment file{1} to be archived".format(len(attachments), 's' if len(attachments) > 1 else ''))
+		logger.debug("identified {0} attachment file{1} to be archived".format(len(attachments), 's' if len(attachments) > 1 else '')) # pylint: disable=logging-format-interpolation
 		kpm.add_data('message_content.html', template)
 		for attachment in attachments:
 			if os.access(attachment, os.R_OK):
 				kpm.add_file(os.path.join('attachments', os.path.basename(attachment)), attachment)
 	else:
 		if len(message_config.get('html_file', '')):
-			logger.info("the specified html_file '{0}' is not readable, the setting will be removed".format(message_config['html_file']))
+			logger.info("the specified html_file '{0}' is not readable, the setting will be removed".format(message_config['html_file'])) # pylint: disable=logging-format-interpolation
 		if 'html_file' in message_config:
 			del message_config['html_file']
 

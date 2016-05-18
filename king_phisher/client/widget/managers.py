@@ -218,7 +218,7 @@ class TreeViewManager(object):
 		if column_titles is None:
 			column_titles = self.column_titles.keys()
 		elif isinstance(column_titles, str):
-			column_titles = (column_titles,)
+			column_titles = (column_titles,) # pylint: disable=redefined-variable-type
 		for column_title in column_titles:
 			column = self.column_views[column_title]
 			cell = column.get_cells()[0]

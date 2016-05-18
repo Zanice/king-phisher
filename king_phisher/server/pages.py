@@ -40,7 +40,7 @@ import smoke_zephyr.utilities
 if its.py_v2:
 	import cgi as html
 else:
-	import html
+	import html # pylint: disable=import-error
 
 def embed_youtube_video(video_id, autoplay=True, enable_js=False, start=0, end=None):
 	"""
@@ -97,7 +97,7 @@ def make_csrf_page(url, params, method='POST'):
 	page.append('  </body>')
 	page.append('</html>')
 
-	page = '\n'.join(page)
+	page = '\n'.join(page) # pylint: disable=redefined-variable-type
 	return markupsafe.Markup(page)
 
 def make_redirect_page(url, title='Automatic Redirect'):
@@ -123,5 +123,5 @@ def make_redirect_page(url, title='Automatic Redirect'):
 	page.append('  </body>')
 	page.append('</html>')
 
-	page = '\n'.join(page)
+	page = '\n'.join(page) # pylint: disable=redefined-variable-type
 	return markupsafe.Markup(page)

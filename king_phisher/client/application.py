@@ -29,6 +29,10 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-statements
 # pylint: disable=wrong-import-order
 
 import copy
@@ -74,7 +78,7 @@ from smoke_zephyr.utilities import which
 if its.py_v2:
 	from httplib import BadStatusLine
 else:
-	from http.client import BadStatusLine
+	from http.client import BadStatusLine # pylint: disable=import-error
 
 USER_DATA_PATH = os.path.join(GLib.get_user_config_dir(), 'king-phisher')
 """The default folder location of user specific data storage."""
@@ -125,16 +129,16 @@ class KingPhisherClientApplication(_Gtk_Application):
 		if use_style:
 			self._theme_file = 'theme.css'
 		else:
-			self._theme_file = DISABLED
+			self._theme_file = DISABLED # pylint: disable=redefined-variable-type
 		self.logger = logging.getLogger('KingPhisher.Client.Application')
 		# log version information for debugging purposes
-		self.logger.debug("gi.repository GLib version: {0}".format('.'.join(map(str, GLib.glib_version))))
-		self.logger.debug("gi.repository GObject version: {0}".format('.'.join(map(str, GObject.pygobject_version))))
-		self.logger.debug("gi.repository Gtk version: {0}.{1}.{2}".format(Gtk.get_major_version(), Gtk.get_minor_version(), Gtk.get_micro_version()))
+		self.logger.debug("gi.repository GLib version: {0}".format('.'.join(map(str, GLib.glib_version)))) # pylint: disable=logging-format-interpolation
+		self.logger.debug("gi.repository GObject version: {0}".format('.'.join(map(str, GObject.pygobject_version)))) # pylint: disable=logging-format-interpolation
+		self.logger.debug("gi.repository Gtk version: {0}.{1}.{2}".format(Gtk.get_major_version(), Gtk.get_minor_version(), Gtk.get_micro_version())) # pylint: disable=logging-format-interpolation
 		if rpc_terminal.has_vte:
-			self.logger.debug("gi.repository VTE version: {0}".format(rpc_terminal.Vte._version))
+			self.logger.debug("gi.repository VTE version: {0}".format(rpc_terminal.Vte._version)) # pylint: disable=logging-format-interpolation,protected-access
 		if graphs.has_matplotlib:
-			self.logger.debug("matplotlib version: {0}".format(graphs.matplotlib.__version__))
+			self.logger.debug("matplotlib version: {0}".format(graphs.matplotlib.__version__)) # pylint: disable=logging-format-interpolation
 		self.set_property('application-id', 'org.king-phisher.client')
 		self.set_property('register-session', True)
 		self.config_file = config_file or os.path.join(USER_DATA_PATH, 'config.json')
@@ -212,17 +216,17 @@ class KingPhisherClientApplication(_Gtk_Application):
 			)
 			self._ssh_forwarder.start()
 		except errors.KingPhisherAbortError as error:
-			self.logger.info("ssh connection aborted ({0})".format(error.message))
+			self.logger.info("ssh connection aborted ({0})".format(error.message)) # pylint: disable=logging-format-interpolation
 		except paramiko.PasswordRequiredException:
 			gui_utilities.show_dialog_error(title_ssh_error, active_window, 'The specified SSH key requires a password.')
 		except paramiko.AuthenticationException:
 			self.logger.warning('failed to authenticate to the remote ssh server')
 			gui_utilities.show_dialog_error(title_ssh_error, active_window, 'The server responded that the credentials are invalid.')
 		except paramiko.SSHException as error:
-			self.logger.warning("failed with ssh exception '{0}'".format(error.args[0]))
+			self.logger.warning("failed with ssh exception '{0}'".format(error.args[0])) # pylint: disable=logging-format-interpolation
 		except socket.error as error:
 			gui_utilities.show_dialog_exc_socket_error(error, active_window, title=title_ssh_error)
-		except Exception as error:
+		except Exception as error: # pylint: disable=broad-except
 			self.logger.warning('failed to connect to the remote ssh server', exc_info=True)
 			gui_utilities.show_dialog_error(title_ssh_error, active_window, "An {0}.{1} error occurred.".format(error.__class__.__module__, error.__class__.__name__))
 		else:
@@ -294,7 +298,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 		campaign = self.rpc.remote_table_row('campaigns', self.config['campaign_id'])
 		prompt = dialogs.TextEntryDialog.build_prompt(self, 'Rename Campaign', 'Enter the new campaign name:', campaign.name)
 		response = prompt.interact()
-		if response == None or response == campaign.name:
+		if response is None or response == campaign.name:
 			return
 		self.rpc('db/table/set', 'campaigns', self.config['campaign_id'], 'name', response)
 		gui_utilities.show_dialog_info('Campaign Name Updated', self.get_active_window(), 'The campaign name was successfully changed.')
@@ -305,7 +309,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 			return
 		exc_info = (exc_type, exc_value, exc_traceback)
 		error_uid = str(uuid.uuid4())
-		self.logger.error("error uid: {0} an unhandled exception was thrown".format(error_uid), exc_info=exc_info)
+		self.logger.error("error uid: {0} an unhandled exception was thrown".format(error_uid), exc_info=exc_info) # pylint: disable=logging-format-interpolation
 		dialogs.ExceptionDialog(self, exc_info=exc_info, error_uid=error_uid).interact()
 
 	def quit(self, optional=False):
@@ -356,7 +360,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 			try:
 				self.plugin_manager.load(name)
 				self.plugin_manager.enable(name)
-			except Exception:
+			except Exception: # pylint: disable=broad-except
 				self.config['plugins.enabled'].remove(name)
 				gui_utilities.show_dialog_error(
 					'Failed To Enable Plugin',
@@ -365,7 +369,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 				)
 
 	def do_campaign_set(self, campaign_id):
-		self.logger.info("campaign set to {0} (id: {1})".format(self.config['campaign_name'], self.config['campaign_id']))
+		self.logger.info("campaign set to {0} (id: {1})".format(self.config['campaign_name'], self.config['campaign_id'])) # pylint: disable=logging-format-interpolation
 		self.emit('rpc-cache-clear')
 
 	def do_config_save(self):
@@ -467,12 +471,12 @@ class KingPhisherClientApplication(_Gtk_Application):
 		with open(config_file, 'r') as tmp_file:
 			config = json_ex.load(tmp_file, strict=strict)
 		if not isinstance(config, dict):
-			self.logger.error("can not merge configuration file: {0} (invalid format)".format(config_file))
+			self.logger.error("can not merge configuration file: {0} (invalid format)".format(config_file)) # pylint: disable=logging-format-interpolation
 			return
 		self.logger.debug('merging configuration information from source file: ' + config_file)
 		for key, value in config.items():
 			if not key in self.config:
-				self.logger.warning("skipped merging non-existent configuration key {0}".format(key))
+				self.logger.warning("skipped merging non-existent configuration key {0}".format(key)) # pylint: disable=logging-format-interpolation
 				continue
 			self.config[key] = value
 		return
@@ -519,7 +523,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 			try:
 				rpc.set_serializer(self.config['rpc.serializer'])
 			except ValueError as error:
-				self.logger.error("failed to set the rpc serializer, error: '{0}'".format(error.message))
+				self.logger.error("failed to set the rpc serializer, error: '{0}'".format(error.message)) # pylint: disable=logging-format-interpolation
 
 		generic_message = 'Can not contact the RPC HTTP service, ensure that the '
 		generic_message += "King Phisher Server is currently running on port {0}.".format(int(self.config['server_remote_port']))
@@ -538,7 +542,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 		except ssl.CertificateError as error:
 			self.logger.warning('failed to connect to the remote rpc service with a https certificate error: ' + error.message)
 			gui_utilities.show_dialog_error(title_rpc_error, active_window, 'The server presented an invalid SSL certificate.')
-		except Exception:
+		except Exception: # pylint: disable=broad-except
 			self.logger.warning('failed to connect to the remote rpc service', exc_info=True)
 			gui_utilities.show_dialog_error(title_rpc_error, active_window, generic_message)
 		else:
@@ -552,6 +556,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 		if isinstance(server_rpc_api_version, int):
 			# compatibility with pre-0.2.0 version
 			server_rpc_api_version = (server_rpc_api_version, 0)
+		# pylint: disable=logging-format-interpolation
 		self.logger.info(
 			"successfully connected to the king phisher server (version: {0} rpc api version: {1}.{2})".format(
 				server_version_info['version'],
@@ -559,6 +564,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 				server_rpc_api_version[1]
 			)
 		)
+		# pylint: enable=logging-format-interpolation
 
 		error_text = None
 		if server_rpc_api_version[0] < version.rpc_api_version.major or (server_rpc_api_version[0] == version.rpc_api_version.major and server_rpc_api_version[1] < version.rpc_api_version.minor):
@@ -638,7 +644,7 @@ class KingPhisherClientApplication(_Gtk_Application):
 			file_path = file_path.get_path()
 		else:
 			file_path = '[ unknown file ]'
-		self.logger.error("css parser error ({0}) in {1}:{2}".format(gerror.message, file_path, css_section.get_start_line()))
+		self.logger.error("css parser error ({0}) in {1}:{2}".format(gerror.message, file_path, css_section.get_start_line())) # pylint: disable=logging-format-interpolation
 		return
 
 	def signal_window_added(self, _, window):
@@ -665,10 +671,10 @@ class KingPhisherClientApplication(_Gtk_Application):
 				web_root=self.config['server_config']['server.web_root']
 			)
 		except KeyError as error:
-			self.logger.error("key error while parsing the sftp command for token: {0}".format(error.args[0]))
+			self.logger.error("key error while parsing the sftp command for token: {0}".format(error.args[0])) # pylint: disable=logging-format-interpolation
 			gui_utilities.show_dialog_error('Invalid SFTP Configuration', self.get_active_window(), "Invalid token '{0}' in the SFTP command.".format(error.args[0]))
 			return False
-		self.logger.debug("starting sftp client command: {0}".format(command))
+		self.logger.debug("starting sftp client command: {0}".format(command)) # pylint: disable=logging-format-interpolation
 		utilities.start_process(command, wait=False)
 		return
 

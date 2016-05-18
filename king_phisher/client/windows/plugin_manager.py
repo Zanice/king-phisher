@@ -172,6 +172,7 @@ class PluginManagerWindow(gui_utilities.GladeGObject):
 		popover.show_all()
 
 	def signal_popup_menu_activate_reload(self, _):
+		# pylint: disable=unsubscriptable-object
 		treeview = self.gobjects['treeview_plugins']
 		pm = self.application.plugin_manager
 		selected_plugin = None
@@ -201,6 +202,7 @@ class PluginManagerWindow(gui_utilities.GladeGObject):
 				pm.enable(name)
 
 	def signal_renderer_toggled(self, _, path):
+		# pylint: disable=unsubscriptable-object
 		pm = self.application.plugin_manager
 		name = self._model[path][0]
 		if name in self._module_errors:
@@ -220,6 +222,7 @@ class PluginManagerWindow(gui_utilities.GladeGObject):
 			self.config['plugins.enabled'].append(name)
 
 	def signal_treeview_row_activated(self, treeview, path, column):
+		# pylint: disable=unsubscriptable-object
 		name = self._model[path][0]
 		self._set_plugin_info(name)
 

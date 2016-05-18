@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=too-many-branches
 # pylint: disable=too-many-statements
 # pylint: disable=wrong-import-order
 
@@ -46,7 +47,7 @@ from king_phisher import ipaddress
 
 import alembic.command
 import alembic.config
-import alembic.environment
+import alembic.environment # pylint: disable=import-error
 import alembic.script
 import smoke_zephyr.utilities
 import sqlalchemy
@@ -180,7 +181,7 @@ def set_meta_data(key, value, session=None):
 	:param session: The session to use to store the value.
 	"""
 	value_type = type(value).__name__
-	if not value_type in _meta_data_type_map:
+	if value_type not in _meta_data_type_map:
 		raise ValueError('incompatible data type:' + value_type)
 	close_session = session is None
 	session = (session or Session())
@@ -223,7 +224,7 @@ def init_database(connection_url, extra_init=False):
 	"""
 	connection_url = normalize_connection_url(connection_url)
 	connection_url = sqlalchemy.engine.url.make_url(connection_url)
-	logger.info("initializing database connection with driver {0}".format(connection_url.drivername))
+	logger.info("initializing database connection with driver {0}".format(connection_url.drivername)) # pylint: disable=logging-format-interpolation
 	if connection_url.drivername == 'sqlite':
 		engine = sqlalchemy.create_engine(connection_url, connect_args={'check_same_thread': False}, poolclass=sqlalchemy.pool.StaticPool)
 		sqlalchemy.event.listens_for(engine, 'begin')(lambda conn: conn.execute('BEGIN'))
@@ -251,7 +252,7 @@ def init_database(connection_url, extra_init=False):
 	session.commit()
 	session.close()
 
-	logger.debug("current database schema version: {0} ({1}current)".format(schema_version, ('' if schema_version == models.SCHEMA_VERSION else 'not ')))
+	logger.debug("current database schema version: {0} ({1}current)".format(schema_version, ('' if schema_version == models.SCHEMA_VERSION else 'not '))) # pylint: disable=logging-format-interpolation
 	if schema_version > models.SCHEMA_VERSION:
 		raise errors.KingPhisherDatabaseError('the database schema is for a newer version, automatic downgrades are not supported')
 	elif schema_version < models.SCHEMA_VERSION:
@@ -268,7 +269,7 @@ def init_database(connection_url, extra_init=False):
 		config.set_main_option('skip_logger_config', 'True')
 		config.set_main_option('sqlalchemy.url', str(connection_url))
 
-		logger.warning("automatically updating the database schema to version {0}".format(models.SCHEMA_VERSION))
+		logger.warning("automatically updating the database schema to version {0}".format(models.SCHEMA_VERSION)) # pylint: disable=logging-format-interpolation
 		try:
 			alembic.command.upgrade(config, 'head')
 		except Exception as error:
@@ -280,7 +281,7 @@ def init_database(connection_url, extra_init=False):
 		session = Session()
 	set_meta_data('schema_version', models.SCHEMA_VERSION)
 
-	logger.debug("connected to {0} database: {1}".format(connection_url.drivername, connection_url.database))
+	logger.debug("connected to {0} database: {1}".format(connection_url.drivername, connection_url.database)) # pylint: disable=logging-format-interpolation
 	return engine
 
 def init_database_postgresql(connection_url):
@@ -310,7 +311,7 @@ def init_database_postgresql(connection_url):
 		else:
 			logger.info('postgresql service is not running, starting it now via systemctl')
 			proc_h = _popen([systemctl_bin, 'start', 'postgresql'])
-			if not proc_h.wait() == 0:
+			if proc_h.wait() != 0:
 				logger.error('failed to start the postgresql service via systemctl')
 				raise errors.KingPhisherDatabaseError('postgresql service failed to start via systemctl')
 			logger.debug('postgresql service successfully started via systemctl')

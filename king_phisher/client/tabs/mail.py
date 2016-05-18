@@ -30,6 +30,8 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # pylint: disable=bad-continuation
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-return-statements
 # pylint: disable=too-many-statements
@@ -73,7 +75,7 @@ if sys.version_info[0] < 3:
 	urllib.parse = urlparse
 	urllib.parse.urlencode = urllib.urlencode
 else:
-	import urllib.parse
+	import urllib.parse # pylint: disable=import-error
 
 def test_webserver_url(target_url, secret_id):
 	"""
@@ -314,7 +316,7 @@ class MailSenderSendTab(gui_utilities.GladeGObject):
 
 		self.text_insert('Connecting to SMTP server... ')
 		if self.config.get('smtp_username', ''):
-			login_dialog = dialogs.SMTPLoginDialog(self.application)
+			login_dialog = dialogs.SMTPLoginDialog(self.application) # pylint: disable=redefined-variable-type
 			response = login_dialog.interact()
 			if response != Gtk.ResponseType.APPLY:
 				self.sender_start_failure(text='canceled.\n')
@@ -560,7 +562,7 @@ class MailSenderEditTab(gui_utilities.GladeGObject):
 		if style_scheme:
 			self.textbuffer.set_style_scheme(style_scheme)
 		else:
-			self.logger.error("invalid GTK source theme: '{0}'".format(style_scheme_name))
+			self.logger.error("invalid GTK source theme: '{0}'".format(style_scheme_name)) # pylint: disable=logging-format-interpolation
 		self.file_monitor = None
 
 		source_completion = self.textview.get_completion()
@@ -830,11 +832,11 @@ class MailSenderConfigurationTab(gui_utilities.GladeGObject):
 				break
 
 			if not response.ok:
-				self.logger.warning("verify url HTTP error: {0} {1}".format(response.status_code, response.reason))
+				self.logger.warning("verify url HTTP error: {0} {1}".format(response.status_code, response.reason)) # pylint: disable=logging-format-interpolation
 				error_description = "HTTP status {0} {1}".format(response.status_code, response.reason)
 				break
 
-			self.logger.debug("verify url HTTP status: {0} {1}".format(response.status_code, response.reason))
+			self.logger.debug("verify url HTTP status: {0} {1}".format(response.status_code, response.reason)) # pylint: disable=logging-format-interpolation
 		if error_description:
 			gui_utilities.show_dialog_warning('Unable To Open The Web Server URL', self.parent, error_description)
 		else:

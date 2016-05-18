@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=ungrouped-imports
 # pylint: disable=wrong-import-order
 
@@ -49,7 +50,7 @@ if sys.version_info[0] < 3:
 	import urlparse
 	urllib.parse = urlparse
 else:
-	import urllib.parse
+	import urllib.parse # pylint: disable=import-error
 
 try:
 	from gi.repository import WebKit2
@@ -128,7 +129,7 @@ class WebPageCloner(object):
 			self.logger.warning('failed to request the empty resource with python')
 			return ''
 		if response.status_code < 200 or response.status_code > 299:
-			self.logger.warning("requested the empty resource with python, but received status: {0} ({1})".format(response.status_code, response.reason))
+			self.logger.warning("requested the empty resource with python, but received status: {0} ({1})".format(response.status_code, response.reason)) # pylint: disable=logging-format-interpolation
 			return ''
 		data = response.content
 		if len(data) != expected_len:
@@ -187,7 +188,7 @@ class WebPageCloner(object):
 
 		crd = ClonedResourceDetails(urllib.parse.unquote(resource_url.path), mime_type, len(data), resource_path)
 		self.cloned_resources[resource_url.path] = crd
-		self.logger.debug("wrote {0:,} bytes to {1}".format(crd.size, resource_path))
+		self.logger.debug("wrote {0:,} bytes to {1}".format(crd.size, resource_path)) # pylint: disable=logging-format-interpolation
 
 	def patch_html(self, data, encoding='utf-8'):
 		"""
@@ -208,7 +209,7 @@ class WebPageCloner(object):
 		try:
 			data = codec.decode(data)[0]
 		except Exception as error: # pylint: disable=broad-except
-			self.logger.error("failed to decode data from web response ({0}) using encoding {1}".format(error.__class__.__name__, encoding))
+			self.logger.error("failed to decode data from web response ({0}) using encoding {1}".format(error.__class__.__name__, encoding)) # pylint: disable=logging-format-interpolation
 			return data
 
 		match = re.search(r'</head>', data, flags=re.IGNORECASE)
@@ -285,7 +286,7 @@ class WebPageCloner(object):
 		self.__web_resources.remove(resource)
 
 	def signal_decide_policy(self, webview, decision, decision_type):
-		self.logger.debug("received policy decision request of type: {0}".format(decision_type.value_name))
+		self.logger.debug("received policy decision request of type: {0}".format(decision_type.value_name)) # pylint: disable=logging-format-interpolation
 		if decision_type != WebKit2.PolicyDecisionType.NAVIGATION_ACTION:
 			return
 		new_target_url_str = decision.get_request().get_uri()
@@ -296,15 +297,15 @@ class WebPageCloner(object):
 		if new_target_url.netloc.lower() != self.target_url.netloc.lower():
 			return
 		self.target_url = new_target_url
-		self.logger.info("updated the target url to: {0}".format(new_target_url_str))
+		self.logger.info("updated the target url to: {0}".format(new_target_url_str)) # pylint: disable=logging-format-interpolation
 
 	def signal_load_changed(self, webview, load_event):
-		self.logger.debug("load status changed to: {0}".format(load_event.value_name))
+		self.logger.debug("load status changed to: {0}".format(load_event.value_name)) # pylint: disable=logging-format-interpolation
 		if load_event == WebKit2.LoadEvent.STARTED:
 			self.load_started = True
 
 	def signal_load_failed(self, webview, event, uri, error):
-		self.logger.warning("load failed on event: {0} for uri: {1}".format(event.value_name, uri))
+		self.logger.warning("load failed on event: {0} for uri: {1}".format(event.value_name, uri)) # pylint: disable=logging-format-interpolation
 		self.load_failed_event = event
 
 	def signal_resource_load_started(self, webveiw, resource, request):

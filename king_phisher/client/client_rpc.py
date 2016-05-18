@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
 # pylint: disable=wrong-import-order
 
 import code
@@ -198,7 +199,7 @@ class KingPhisherRPCClient(AdvancedHTTPServer.AdvancedHTTPServerRPCClientCached)
 			else:
 				self.client = AdvancedHTTPServer.http.client.HTTPSConnection(self.host, self.port)
 		else:
-			self.client = AdvancedHTTPServer.http.client.HTTPConnection(self.host, self.port)
+			self.client = AdvancedHTTPServer.http.client.HTTPConnection(self.host, self.port) # pylint: disable=redefined-variable-type
 		self.lock.release()
 
 	def remote_table(self, table, query_filter=None):

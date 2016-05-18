@@ -30,6 +30,8 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # pylint: disable=bad-continuation
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=too-many-statements
 # pylint: disable=wrong-import-order
 
@@ -130,7 +132,7 @@ class AuthenticatedSessionManager(object):
 			self._sessions[stored_session.id] = auth_session
 		session.query(db_models.AuthenticatedSession).delete()
 		session.commit()
-		self.logger.info("restored {0:,} valid sessions and skipped {1:,} expired sessions from the database".format(len(self._sessions), expired))
+		self.logger.info("restored {0:,} valid sessions and skipped {1:,} expired sessions from the database".format(len(self._sessions), expired)) # pylint: disable=logging-format-interpolation
 
 	def __len__(self):
 		return len(self._sessions)
@@ -178,7 +180,7 @@ class AuthenticatedSessionManager(object):
 			for old_session_id in remove:
 				del self._sessions[old_session_id]
 			if remove:
-				self.logger.info("invalidated {0:,} previously existing session for user {1}".format(len(remove), user))
+				self.logger.info("invalidated {0:,} previously existing session for user {1}".format(len(remove), user)) # pylint: disable=logging-format-interpolation
 			while new_session_id in self._sessions:
 				new_session_id = base64.b64encode(os.urandom(50))
 			self._sessions[new_session_id] = new_session
@@ -235,7 +237,7 @@ class AuthenticatedSessionManager(object):
 		if len(self._sessions) == 1:
 			self.logger.info('1 session was stored in the database')
 		else:
-			self.logger.info("{0:,} sessions were stored in the database".format(len(self._sessions)))
+			self.logger.info("{0:,} sessions were stored in the database".format(len(self._sessions))) # pylint: disable=logging-format-interpolation
 
 class CachedPassword(object):
 	"""
@@ -298,7 +300,7 @@ class ForkedAuthenticator(object):
 		"""The timeout for individual requests in seconds."""
 		self.required_group = required_group
 		self.service = pam_service
-		self.logger.debug("use pam service '{0}' for authentication".format(self.service))
+		self.logger.debug("use pam service '{0}' for authentication".format(self.service)) # pylint: disable=logging-format-interpolation
 		if self.required_group and not self.required_group in [g.gr_name for g in grp.getgrall()]:
 			self.logger.error('the specified group for authentication was not found')
 		self.parent_rfile, self.child_wfile = os.pipe()
@@ -319,7 +321,7 @@ class ForkedAuthenticator(object):
 			self.rfile.close()
 			self.wfile.close()
 			logging.shutdown()
-			os._exit(os.EX_OK)
+			os._exit(os.EX_OK) # pylint: disable=protected-access
 		self.logger.debug('forked an authenticating process with pid: ' + str(self.child_pid))
 		# below this are attributes exclusive to the parent process
 		self.cache = {}
@@ -376,11 +378,11 @@ class ForkedAuthenticator(object):
 			response = self._raw_recv(timeout)
 			if response.get('sequence') == expected_sequence:
 				break
-			self.logger.warning("dropping response due to sequence number mismatch (received: {0} expected: {1})".format(response.get('sequence'), expected_sequence))
+			self.logger.warning("dropping response due to sequence number mismatch (received: {0} expected: {1})".format(response.get('sequence'), expected_sequence)) # pylint: disable=logging-format-interpolation
 			timeout -= time.time() - start_time
 		else:
 			raise errors.KingPhisherTimeoutError('a response was not received within the timeout')
-		self.logger.debug("received response with sequence number {0}".format(response.get('sequence')))
+		self.logger.debug("received response with sequence number {0}".format(response.get('sequence'))) # pylint: disable=logging-format-interpolation
 		return response
 
 	def child_routine(self):
@@ -398,7 +400,7 @@ class ForkedAuthenticator(object):
 				self.logger.warning('request received without a valid sequence number')
 				continue
 			action = request.get('action', 'UNKNOWN')
-			self.logger.debug("received request with sequence number {0} and action '{1}'".format(request['sequence'], action))
+			self.logger.debug("received request with sequence number {0} and action '{1}'".format(request['sequence'], action)) # pylint: disable=logging-format-interpolation
 			if action == 'stop':
 				break
 			elif action != 'authenticate':
@@ -412,39 +414,41 @@ class ForkedAuthenticator(object):
 				with alarm_set(self.response_timeout):
 					result = pam_handle.authenticate(username, password, service=self.service, resetcreds=False)
 			except errors.KingPhisherTimeoutError:
-				self.logger.warning("authentication failed for user: {0} reason: received timeout".format(username))
+				self.logger.warning("authentication failed for user: {0} reason: received timeout".format(username)) # pylint: disable=logging-format-interpolation
 				result = False
 			elapsed_time = time.time() - start_time
-			self.logger.debug("pam returned code: {0} reason: '{1}' for user {2} after {3:.2f} seconds".format(pam_handle.code, pam_handle.reason, username, elapsed_time))
+			self.logger.debug("pam returned code: {0} reason: '{1}' for user {2} after {3:.2f} seconds".format(pam_handle.code, pam_handle.reason, username, elapsed_time)) # pylint: disable=logging-format-interpolation
 
+			# pylint: disable=redefined-variable-type
 			result = {
 				'result': result,
 				'sequence': request['sequence'],
 				'username': username
 			}
+			# pylint: enable=redefined-variable-type
 			if result['result']:
 				if self.required_group:
 					result['result'] = False
-					self.logger.debug("checking groups for user: {0}".format(username))
+					self.logger.debug("checking groups for user: {0}".format(username)) # pylint: disable=logging-format-interpolation
 					try:
 						with alarm_set(int(round(self.response_timeout - elapsed_time))):
 							groups = get_groups_for_user(username)
 						assert self.required_group in groups
 					except errors.KingPhisherTimeoutError:
-						self.logger.warning("authentication failed for user: {0} reason: received timeout".format(username))
+						self.logger.warning("authentication failed for user: {0} reason: received timeout".format(username)) # pylint: disable=logging-format-interpolation
 					except AssertionError:
-						self.logger.warning("authentication failed for user: {0} reason: lack of group membership".format(username))
+						self.logger.warning("authentication failed for user: {0} reason: lack of group membership".format(username)) # pylint: disable=logging-format-interpolation
 					except KeyError:
-						self.logger.error("encountered a KeyError while looking up group membership for user: {0}".format(username))
+						self.logger.error("encountered a KeyError while looking up group membership for user: {0}".format(username)) # pylint: disable=logging-format-interpolation
 					except Exception: # pylint: disable=broad-except
-						self.logger.error("encountered an Exception while looking up group membership for user: {0}".format(username), exc_info=True)
+						self.logger.error("encountered an Exception while looking up group membership for user: {0}".format(username), exc_info=True) # pylint: disable=logging-format-interpolation
 					else:
 						result['result'] = True
-						self.logger.debug("group requirement met for user: {0}".format(username))
+						self.logger.debug("group requirement met for user: {0}".format(username)) # pylint: disable=logging-format-interpolation
 			else:
-				self.logger.warning("authentication failed for user: {0} reason: bad username or password".format(username))
+				self.logger.warning("authentication failed for user: {0} reason: bad username or password".format(username)) # pylint: disable=logging-format-interpolation
 			self._raw_send(result)
-			self.logger.debug("sent response with sequence number {0}".format(request['sequence']))
+			self.logger.debug("sent response with sequence number {0}".format(request['sequence'])) # pylint: disable=logging-format-interpolation
 
 	def authenticate(self, username, password):
 		"""
@@ -460,7 +464,7 @@ class ForkedAuthenticator(object):
 		cached_password = self.cache.get(username)
 		if cached_password is not None:
 			if cached_password.time + self.cache_timeout >= time.time():
-				self.logger.debug("checking authentication for user {0} with cached password hash".format(username))
+				self.logger.debug("checking authentication for user {0} with cached password hash".format(username)) # pylint: disable=logging-format-interpolation
 				return cached_password == password
 			self.logger.debug('removing expired hashed and cached password for user ' + username)
 			del self.cache[username]
@@ -478,7 +482,7 @@ class ForkedAuthenticator(object):
 			self._lock.release()
 			return False
 		if result['result'] and result.get('username') == username:
-			self.logger.info("user {0} has successfully authenticated".format(username))
+			self.logger.info("user {0} has successfully authenticated".format(username)) # pylint: disable=logging-format-interpolation
 			self.cache[username] = CachedPassword.new_from_password(password)
 		self._lock.release()
 		return result['result']

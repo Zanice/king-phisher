@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
 # pylint: disable=wrong-import-order
 
 import base64
@@ -50,7 +51,7 @@ import jinja2
 if its.py_v2:
 	import cgi as html
 else:
-	import html
+	import html # pylint: disable=import-error
 
 __all__ = ('TemplateEnvironmentBase', 'MessageTemplateEnvironment')
 
@@ -128,7 +129,7 @@ class TemplateEnvironmentBase(jinja2.Environment):
 		else:
 			raise ValueError('Unknown encoding type: ' + encoding)
 		if its.py_v3 and isinstance(data, bytes):
-			data = data.decode('utf-8')
+			data = data.decode('utf-8') # pylint: disable=redefined-variable-type
 		return data
 
 	def _filter_encode(self, data, encoding):
@@ -163,7 +164,7 @@ class TemplateEnvironmentBase(jinja2.Environment):
 		try:
 			result = dt.strftime(fmt)
 		except ValueError:
-			self.logger.error("invalid time format '{0}'".format(fmt))
+			self.logger.error("invalid time format '{0}'".format(fmt)) # pylint: disable=logging-format-interpolation
 			result = ''
 		return result
 

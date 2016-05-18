@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
 # pylint: disable=wrong-import-order
 
 import contextlib
@@ -308,7 +309,7 @@ def gtk_treeview_selection_to_clipboard(treeview, columns=0):
 		values = (model.get_value(ti, column) for column in columns)
 		values = (('' if value is None else str(value)) for value in values)
 		selection_lines.append(' '.join(values).strip())
-	selection_lines = os.linesep.join(selection_lines)
+	selection_lines = os.linesep.join(selection_lines) # pylint: disable=redefined-variable-type
 	clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 	clipboard.set_text(selection_lines, -1)
 
@@ -359,7 +360,7 @@ def gtk_widget_destroy_children(widget):
 	for child in widget.get_children():
 		child.destroy()
 
-def show_dialog(message_type, message, parent, secondary_text=None, message_buttons=Gtk.ButtonsType.OK, use_markup=False, secondary_use_markup=False):
+def show_dialog(message_type, message, parent, secondary_text=None, message_buttons=Gtk.ButtonsType.OK, use_markup=False, secondary_use_markup=False): # pylint: disable=too-many-arguments
 	"""
 	Display a dialog and return the response. The response is dependent on
 	the value of *message_buttons*.
@@ -599,7 +600,7 @@ class GladeGObject(GladeGObjectMeta('_GladeGObject', (object,), {})):
 			if method is None:
 				raise ValueError("gobject {0} does not have method {1}".format(dest.widget, dest.method))
 			src_widget = self.gtk_builder.get_object(child.name)
-			self.logger.debug("setting proxied widget {0} via {1}.{2}".format(child.name, dest.widget, dest.method))
+			self.logger.debug("setting proxied widget {0} via {1}.{2}".format(child.name, dest.widget, dest.method)) # pylint: disable=logging-format-interpolation
 			method(src_widget, *dest.args, **dest.kwargs)
 
 	def destroy(self):
@@ -697,5 +698,5 @@ class FileMonitor(object):
 		self.logger.debug('cancelled file monitor for: ' + self.path)
 
 	def cb_changed(self, gfile_monitor, gfile, gfile_other, gfile_monitor_event):
-		self.logger.debug("file monitor {0} received event: {1}".format(self.path, gfile_monitor_event.value_name))
+		self.logger.debug("file monitor {0} received event: {1}".format(self.path, gfile_monitor_event.value_name)) # pylint: disable=logging-format-interpolation
 		self.on_changed(self.path, gfile_monitor_event)

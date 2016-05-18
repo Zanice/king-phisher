@@ -65,7 +65,7 @@ class FreezableDict(collections.OrderedDict):
 		super(FreezableDict, self).__init__(*args, **kwargs)
 		self._frozen = False
 
-	def __repr__(self):
+	def __repr__(self): # pylint: disable=arguments-differ
 		return "<{0} frozen={1} {2}>".format(self.__class__.__name__, self._frozen, super(FreezableDict, self).__repr__())
 
 	def __setitem__(self, *args, **kwargs):
@@ -273,7 +273,7 @@ def is_valid_email_address(email_address):
 	:return: Whether the email address appears to be valid or not.
 	:rtype: bool
 	"""
-	if email_address == None:
+	if email_address is None:
 		return False
 	return EMAIL_REGEX.match(email_address) != None
 

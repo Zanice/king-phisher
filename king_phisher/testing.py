@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
 # pylint: disable=ungrouped-imports
 # pylint: disable=wrong-import-order
 
@@ -55,8 +56,8 @@ if sys.version_info[0] < 3:
 	urllib.parse = urlparse
 	urllib.parse.urlencode = urllib.urlencode
 else:
-	import http.client
-	import urllib.parse
+	import http.client # pylint: disable=import-error
+	import urllib.parse # pylint: disable=import-error
 
 __all__ = (
 	'TEST_MESSAGE_TEMPLATE',
@@ -205,7 +206,7 @@ class KingPhisherServerTestCase(KingPhisherTestCase):
 			if isinstance(include_id, str):
 				id_value = include_id
 			else:
-				id_value = self.config.get('server.secret_id')
+				id_value = self.config.get('server.secret_id') # pylint: disable=redefined-variable-type
 			resource += "{0}id={1}".format('&' if '?' in resource else '?', id_value)
 		conn = http.client.HTTPConnection('localhost', self.config.get('server.address.port'))
 		request_kwargs = {}

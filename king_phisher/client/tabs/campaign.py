@@ -30,6 +30,7 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # pylint: disable=bad-continuation
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=wrong-import-order
 
 import datetime
@@ -115,10 +116,10 @@ class CampaignViewGenericTab(gui_utilities.GladeGObject):
 		self.is_destroyed.set()
 		self.loader_thread_stop.set()
 		if isinstance(self.loader_thread, threading.Thread) and self.loader_thread.is_alive():
-			self.logger.debug("waiting on thread: {0}.loader_thread (tid: 0x{1:x})".format(self.__class__.__name__, self.loader_thread.ident))
+			self.logger.debug("waiting on thread: {0}.loader_thread (tid: 0x{1:x})".format(self.__class__.__name__, self.loader_thread.ident)) # pylint: disable=logging-format-interpolation
 			while self.loader_thread.is_alive():
 				gui_utilities.gtk_sync()
-			self.logger.debug("joined thread: {0}.loader_thread (tid: 0x{1:x})".format(self.__class__.__name__, self.loader_thread.ident))
+			self.logger.debug("joined thread: {0}.loader_thread (tid: 0x{1:x})".format(self.__class__.__name__, self.loader_thread.ident)) # pylint: disable=logging-format-interpolation
 
 	def signal_kpc_campaign_set(self, kpc, cid):
 		self.load_campaign_information()
@@ -396,7 +397,7 @@ class CampaignViewDashboardTab(CampaignViewGenericTab):
 			self.gobjects['scrolledwindow_' + dash_port].add(graph_inst.canvas)
 			self.gobjects['box_' + dash_port].pack_end(graph_inst.navigation_toolbar, False, False, 0)
 			self.graphs.append(graph_inst)
-		self.logger.debug("dashboard refresh frequency set to {0} seconds".format(self.refresh_frequency))
+		self.logger.debug("dashboard refresh frequency set to {0} seconds".format(self.refresh_frequency)) # pylint: disable=logging-format-interpolation
 		GLib.timeout_add_seconds(self.refresh_frequency, self.loader_idle_routine)
 
 	def load_campaign_information(self, force=True):

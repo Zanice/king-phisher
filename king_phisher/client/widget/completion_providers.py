@@ -102,7 +102,7 @@ class CustomCompletionProviderBase(GObject.GObject, GtkSource.CompletionProvider
 			completion_data = find.find_data_file(os.path.join('completion', self.data_file))
 			if completion_data is None:
 				raise RuntimeError("failed to find completion data file '{0}'".format(self.data_file))
-			self.logger.debug("loading {0} completion data from: {1}".format(self.name, completion_data))
+			self.logger.debug("loading {0} completion data from: {1}".format(self.name, completion_data)) # pylint: disable=logging-format-interpolation
 			with open(completion_data, 'r') as file_h:
 				completion_data = json_ex.load(file_h)
 			self.load_data(completion_data)
@@ -122,7 +122,7 @@ class CustomCompletionProviderBase(GObject.GObject, GtkSource.CompletionProvider
 		"""
 		pass
 
-	def populate(self, context, match):
+	def populate(self, context, match): # pylint: disable=arguments-differ
 		"""
 		This is called when the :py:attr:`.extraction_regex` returns a match.
 		Subclasses must then use this opportunity to populate the *context* with

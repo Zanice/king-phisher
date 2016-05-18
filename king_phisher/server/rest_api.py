@@ -69,7 +69,7 @@ def rest_handler(handle_function):
 		client_ip = ipaddress.ip_address(handler.client_address[0])
 		config = handler.config
 		if not config.get('server.rest_api.enabled'):
-			logger.warning("denying REST API request from {0} (REST API is disabled)".format(client_ip))
+			logger.warning("denying REST API request from {0} (REST API is disabled)".format(client_ip)) # pylint: disable=logging-format-interpolation
 			handler.respond_unauthorized()
 			return
 		networks = config.get_if_exists('server.rest_api.networks')
@@ -82,19 +82,19 @@ def rest_handler(handle_function):
 					found = True
 					break
 			if not found:
-				logger.warning("denying REST API request from {0} (origin is from an unauthorized network)".format(client_ip))
+				logger.warning("denying REST API request from {0} (origin is from an unauthorized network)".format(client_ip)) # pylint: disable=logging-format-interpolation
 				handler.respond_unauthorized()
 				return
 		if not handler.config.get('server.rest_api.token'):
-			logger.warning("denying REST API request from {0} (configured token is invalid)".format(client_ip))
+			logger.warning("denying REST API request from {0} (configured token is invalid)".format(client_ip)) # pylint: disable=logging-format-interpolation
 			handler.respond_unauthorized()
 			return
 		if config.get('server.rest_api.token') != handler.get_query('token'):
-			logger.warning("denying REST API request from {0} (invalid authentication token)".format(client_ip))
+			logger.warning("denying REST API request from {0} (invalid authentication token)".format(client_ip)) # pylint: disable=logging-format-interpolation
 			handler.respond_unauthorized()
 			return
 		response = dict(result=handle_function(handler, params))
-		response = json.dumps(response, sort_keys=True, indent=2, separators=(',', ': '))
+		response = json.dumps(response, sort_keys=True, indent=2, separators=(',', ': ')) # pylint: disable=redefined-variable-type
 		response = response.encode('utf-8')
 		handler.send_response(200)
 		handler.send_header('Content-Type', 'application/json')

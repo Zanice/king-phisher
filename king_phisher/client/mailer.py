@@ -31,6 +31,8 @@
 #
 
 # disable this warning for the email.mime.* modules that have to be imported
+# pylint: disable=bad-continuation
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=ungrouped-imports
 # pylint: disable=unused-import
 # pylint: disable=wrong-import-order
@@ -73,7 +75,7 @@ if sys.version_info[0] < 3:
 	import urlparse
 	urllib.parse = urlparse
 else:
-	import urllib.parse
+	import urllib.parse # pylint: disable=import-error
 
 __all__ = (
 	'guess_smtp_server_address',
@@ -327,12 +329,12 @@ class MailSenderThread(threading.Thread):
 			)
 			self._ssh_forwarder.start()
 		except errors.KingPhisherAbortError as error:
-			self.logger.info("ssh connection aborted ({0})".format(error.message))
+			self.logger.info("ssh connection aborted ({0})".format(error.message)) # pylint: disable=logging-format-interpolation
 		except paramiko.AuthenticationException:
 			self.logger.warning('failed to authenticate to the remote ssh server')
 			return ConnectionErrorReason.ERROR_AUTHENTICATION_FAILED
 		except paramiko.SSHException as error:
-			self.logger.warning("failed with ssh exception '{0}'".format(error.message))
+			self.logger.warning("failed with ssh exception '{0}'".format(error.message)) # pylint: disable=logging-format-interpolation
 		except Exception: # pylint: disable=broad-except
 			self.logger.warning('failed to connect to the remote ssh server', exc_info=True)
 		else:
@@ -366,7 +368,7 @@ class MailSenderThread(threading.Thread):
 			try:
 				self.smtp_connection.login(username, password)
 			except smtplib.SMTPException as error:
-				self.logger.warning('received an {0} while authenticating to the SMTP server'.format(error.__class__.__name__))
+				self.logger.warning('received an {0} while authenticating to the SMTP server'.format(error.__class__.__name__)) # pylint: disable=logging-format-interpolation
 				self.smtp_connection.quit()
 				return ConnectionErrorReason.ERROR_AUTHENTICATION_FAILED
 		return ConnectionErrorReason.SUCCESS
@@ -436,10 +438,10 @@ class MailSenderThread(threading.Thread):
 				email_address = raw_target['email_address'] or ''
 				email_address = email_address.strip()
 				if not email_address:
-					self.logger.warning("skipping line {0} in target csv file due to missing email address".format(line_no))
+					self.logger.warning("skipping line {0} in target csv file due to missing email address".format(line_no)) # pylint: disable=logging-format-interpolation
 					continue
 				if not utilities.is_valid_email_address(email_address):
-					self.logger.warning("skipping line {0} in target csv file due to invalid email address: {1}".format(line_no, email_address))
+					self.logger.warning("skipping line {0} in target csv file due to invalid email address: {1}".format(line_no, email_address)) # pylint: disable=logging-format-interpolation
 					continue
 				target = MessageTarget(
 					first_name=raw_target['first_name'].strip(),
@@ -451,7 +453,7 @@ class MailSenderThread(threading.Thread):
 				yield target
 			target_file_h.close()
 		else:
-			self.logger.error("the configured target type '{0}' is unsupported".format(target_type))
+			self.logger.error("the configured target type '{0}' is unsupported".format(target_type)) # pylint: disable=logging-format-interpolation
 
 	def run(self):
 		emails_done = 0
@@ -464,9 +466,9 @@ class MailSenderThread(threading.Thread):
 
 		emails_total = "{0:,}".format(emails_total)
 		sending_line = "Sending email {{0: >{0},}} of {1} with UID: {{1}} to {{2}}".format(len(emails_total), emails_total)
-		emails_total = int(emails_total.replace(',', ''))
+		emails_total = int(emails_total.replace(',', '')) # pylint: disable=redefined-variable-type
 		attachments = self.get_mime_attachments()
-		self.logger.debug("loaded {0:,} MIME attachments".format(sum((len(attachments.files), len(attachments.images)))))
+		self.logger.debug("loaded {0:,} MIME attachments".format(sum((len(attachments.files), len(attachments.images))))) # pylint: disable=logging-format-interpolation
 
 		for target in self.iterate_targets():
 			iteration_time = time.time()
@@ -562,7 +564,7 @@ class MailSenderThread(threading.Thread):
 		with codecs.open(self.config['mailer.html_file'], 'r', encoding='utf-8') as file_h:
 			msg_template = file_h.read()
 		formatted_msg = render_message_template(msg_template, self.config, target=target)
-		part = mime.text.MIMEText(formatted_msg, 'html', 'utf-8')
+		part = mime.text.MIMEText(formatted_msg, 'html', 'utf-8') # pylint: disable=redefined-variable-type
 		alt_msg.attach(part)
 
 		start_time = get_invite_start_from_config(self.config)
@@ -645,7 +647,7 @@ class MailSenderThread(threading.Thread):
 
 		images = []
 		for attachment_file, attachment_name in template_environment.attachment_images.items():
-			attachfile = mime.image.MIMEImage(open(attachment_file, 'rb').read())
+			attachfile = mime.image.MIMEImage(open(attachment_file, 'rb').read()) # pylint: disable=redefined-variable-type
 			attachfile.add_header('Content-ID', "<{0}>".format(attachment_name))
 			attachfile.add_header('Content-Disposition', "inline; filename=\"{0}\"".format(attachment_name))
 			images.append(attachfile)
@@ -667,7 +669,7 @@ class MailSenderThread(threading.Thread):
 					break
 				except smtplib.SMTPException as error:
 					self.tab_notify_status("Failed to send message (exception: {0})".format(error.__class__.__name__))
-					self.logger.warning("failed to send message (exception: smtplib.{0})".format(error.__class__.__name__))
+					self.logger.warning("failed to send message (exception: smtplib.{0})".format(error.__class__.__name__)) # pylint: disable=logging-format-interpolation
 					time.sleep(1)
 			if not message_sent:
 				self.server_smtp_disconnect()

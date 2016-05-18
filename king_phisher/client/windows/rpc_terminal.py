@@ -97,11 +97,11 @@ class RPCTerminalAppWindow(gui_utilities.GladeGObject):
 		utilities.open_uri('https://github.com/securestate/king-phisher/wiki')
 
 	def signal_window_destroy(self, window):
-		if self.child_pid == None:
+		if self.child_pid is None:
 			self.logger.error('signal_window_destory was called but the child pid is None')
 			return
 		if os.path.exists("/proc/{0}".format(self.child_pid)):
-			self.logger.debug("sending sigkill to child process: {0}".format(self.child_pid))
+			self.logger.debug("sending sigkill to child process: {0}".format(self.child_pid)) # pylint: disable=logging-format-interpolation
 			os.kill(self.child_pid, signal.SIGKILL)
 
 class RPCTerminal(object):
@@ -147,7 +147,7 @@ class RPCTerminal(object):
 			"import {0}".format(client_rpc.__name__),
 			"{0}.vte_child_routine('{1}')".format(client_rpc.__name__, json_ex.dumps(config, pretty=False))
 		]
-		python_command = '; '.join(python_command)
+		python_command = '; '.join(python_command) # pylint: disable=redefined-variable-type
 
 		if hasattr(self.terminal, 'pty_new_sync'):
 			# Vte._version >= 2.91
@@ -172,7 +172,7 @@ class RPCTerminal(object):
 			user_data=vte_pty
 		)
 
-		self.logger.info("vte spawned child process with pid: {0}".format(child_pid))
+		self.logger.info("vte spawned child process with pid: {0}".format(child_pid)) # pylint: disable=logging-format-interpolation
 		self.child_pid = child_pid
 		self.terminal.watch_child(child_pid)
 		GLib.spawn_close_pid(child_pid)

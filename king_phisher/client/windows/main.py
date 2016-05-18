@@ -30,6 +30,7 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # pylint: disable=bad-continuation
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=wrong-import-order
 
 import logging

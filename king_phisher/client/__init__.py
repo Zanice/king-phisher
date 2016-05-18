@@ -29,6 +29,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: disable=bad-continuation
 # pylint: disable=wrong-import-order
 
 from king_phisher import its
@@ -67,7 +68,7 @@ if not its.on_rtd:
 	for namespace, versions in _gi_versions:
 		if not isinstance(versions, (list, tuple)):
 			versions = (versions,)
-		versions = reversed(sorted(versions, key=float))
+		versions = reversed(sorted(versions, key=float)) # pylint: disable=redefined-variable-type
 		available_versions = repo.enumerate_versions(namespace)
 		for version in versions:
 			if version in available_versions:

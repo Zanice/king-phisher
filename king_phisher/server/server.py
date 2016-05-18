@@ -30,6 +30,8 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # pylint: disable=bad-continuation
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-instance-attributes
 # pylint: disable=too-many-return-statements
 # pylint: disable=too-many-statements
 # pylint: disable=wrong-import-order
@@ -91,19 +93,19 @@ def build_king_phisher_server(config, ServerClass=None, HandlerClass=None):
 	if config.has_option('server.ssl_cert'):
 		ssl_certfile = config.get('server.ssl_cert')
 		if not os.access(ssl_certfile, os.R_OK):
-			logger.critical("setting server.ssl_cert file '{0}' not found".format(ssl_certfile))
+			logger.critical("setting server.ssl_cert file '{0}' not found".format(ssl_certfile)) # pylint: disable=logging-format-interpolation
 			raise errors.KingPhisherError('invalid ssl configuration, missing file')
 		if config.has_option('server.ssl_key'):
 			ssl_keyfile = config.get('server.ssl_key')
 			if not os.access(ssl_keyfile, os.R_OK):
-				logger.critical("setting server.ssl_key file '{0}' not found".format(ssl_keyfile))
+				logger.critical("setting server.ssl_key file '{0}' not found".format(ssl_keyfile)) # pylint: disable=logging-format-interpolation
 				raise errors.KingPhisherError('invalid ssl configuration, missing file')
 	try:
 		server = ServerClass(config, HandlerClass, address=address, ssl_certfile=ssl_certfile, ssl_keyfile=ssl_keyfile)
 	except socket.error as error:
 		error_number, error_message = error.args
 		if error_number == 98:
-			logger.critical("failed to bind server to address {0}:{1} (socket error #98)".format(*address))
+			logger.critical("failed to bind server to address {0}:{1} (socket error #98)".format(*address)) # pylint: disable=logging-format-interpolation
 		raise errors.KingPhisherError("socket error #{0} ({1})".format((error_number or 'NOT-SET'), error_message))
 	if config.has_option('server.server_header'):
 		server.server_version = config.get('server.server_header')
@@ -168,7 +170,7 @@ class KingPhisherRequestHandler(server_rpc.KingPhisherRequestHandlerRPC, Advance
 
 	def adjust_path(self):
 		"""Adjust the :py:attr:`~.KingPhisherRequestHandler.path` attribute based on multiple factors."""
-		self.request_path = self.path.split('?', 1)[0]
+		self.request_path = self.path.split('?', 1)[0] # pylint: disable=attribute-defined-outside-init
 		if not self.config.get('server.vhost_directories'):
 			return
 		if not self.vhost:
@@ -296,7 +298,7 @@ class KingPhisherRequestHandler(server_rpc.KingPhisherRequestHandlerRPC, Advance
 
 		if self.path in ('/version', '/login'):
 			return True
-		self.rpc_session = self.server.session_manager.get(self.rpc_session_id)
+		self.rpc_session = self.server.session_manager.get(self.rpc_session_id) # pylint: disable=attribute-defined-outside-init
 		if not isinstance(self.rpc_session, aaa.AuthenticatedSession):
 			return False
 		return True
@@ -314,13 +316,13 @@ class KingPhisherRequestHandler(server_rpc.KingPhisherRequestHandlerRPC, Advance
 		database. If no campaign is associated, this value is None.
 		"""
 		if hasattr(self, '_campaign_id'):
-			return self._campaign_id
-		self._campaign_id = None
+			return self._campaign_id # pylint: disable=access-member-before-definition
+		self._campaign_id = None # pylint: disable=attribute-defined-outside-init
 		if self.message_id and self.message_id != self.config.get('server.secret_id'):
 			session = db_manager.Session()
 			message = db_manager.get_row_by_id(session, db_models.Message, self.message_id)
 			if message:
-				self._campaign_id = message.campaign_id
+				self._campaign_id = message.campaign_id # pylint: disable=attribute-defined-outside-init
 			session.close()
 		return self._campaign_id
 
@@ -336,18 +338,18 @@ class KingPhisherRequestHandler(server_rpc.KingPhisherRequestHandlerRPC, Advance
 		of the configurations server.secret_id for testing purposes.
 		"""
 		if hasattr(self, '_message_id'):
-			return self._message_id
-		self._message_id = None
+			return self._message_id # pylint: disable=access-member-before-definition
+		self._message_id = None # pylint: disable=attribute-defined-outside-init
 		msg_id = self.get_query('id')
 		if msg_id == self.config.get('server.secret_id'):
-			self._message_id = msg_id
+			self._message_id = msg_id # pylint: disable=attribute-defined-outside-init
 			return self._message_id
 		session = db_manager.Session()
 		if msg_id and db_manager.get_row_by_id(session, db_models.Message, msg_id):
-			self._message_id = msg_id
+			self._message_id = msg_id # pylint: disable=attribute-defined-outside-init
 		elif self.visit_id:
 			visit = db_manager.get_row_by_id(session, db_models.Visit, self.visit_id)
-			self._message_id = visit.message_id
+			self._message_id = visit.message_id # pylint: disable=attribute-defined-outside-init
 		session.close()
 		return self._message_id
 
@@ -359,14 +361,14 @@ class KingPhisherRequestHandler(server_rpc.KingPhisherRequestHandlerRPC, Advance
 		If no cookie is set, this value is None.
 		"""
 		if hasattr(self, '_visit_id'):
-			return self._visit_id
-		self._visit_id = None
+			return self._visit_id # pylint: disable=access-member-before-definition
+		self._visit_id = None # pylint: disable=attribute-defined-outside-init
 		kp_cookie_name = self.config.get('server.cookie_name')
 		if kp_cookie_name in self.cookies:
 			value = self.cookies[kp_cookie_name].value
 			session = db_manager.Session()
 			if db_manager.get_row_by_id(session, db_models.Visit, value):
-				self._visit_id = value
+				self._visit_id = value # pylint: disable=attribute-defined-outside-init
 			session.close()
 		return self._visit_id
 
@@ -664,10 +666,10 @@ class KingPhisherRequestHandler(server_rpc.KingPhisherRequestHandlerRPC, Advance
 		session = db_manager.Session()
 		campaign = db_manager.get_row_by_id(session, db_models.Campaign, self.campaign_id)
 		if campaign.has_expired:
-			self.logger.info("ignoring page visit for expired campaign id: {0} from IP address: {1}".format(self.campaign_id, client_ip))
+			self.logger.info("ignoring page visit for expired campaign id: {0} from IP address: {1}".format(self.campaign_id, client_ip)) # pylint: disable=logging-format-interpolation
 			session.close()
 			return
-		self.logger.info("handling a page visit for campaign id: {0} from IP address: {1}".format(self.campaign_id, client_ip))
+		self.logger.info("handling a page visit for campaign id: {0} from IP address: {1}".format(self.campaign_id, client_ip)) # pylint: disable=logging-format-interpolation
 		message = db_manager.get_row_by_id(session, db_models.Message, self.message_id)
 
 		if message.opened is None and self.config.get_if_exists('server.set_message_opened_on_visit', True):

@@ -150,14 +150,14 @@ class MissingHostKeyPolicy(paramiko.MissingHostKeyPolicy):
 
 		if host_keys.lookup(hostname):
 			if host_keys.check(hostname, key):
-				self.logger.debug("accepting known ssh host key {0} {1} {2}".format(hostname, key.get_name(), host_key_fingerprint))
+				self.logger.debug("accepting known ssh host key {0} {1} {2}".format(hostname, key.get_name(), host_key_fingerprint)) # pylint: disable=logging-format-interpolation
 				return
-			self.logger.warning("ssh host key does not match known value for {0}".format(hostname))
+			self.logger.warning("ssh host key does not match known value for {0}".format(hostname)) # pylint: disable=logging-format-interpolation
 			dialog = HostKeyWarnDialog(self.application, hostname, key)
 			if dialog.interact() != Gtk.ResponseType.ACCEPT:
 				raise errors.KingPhisherAbortError('bad ssh host key for ' + hostname)
 		else:
-			dialog = HostKeyAcceptDialog(self.application, hostname, key)
+			dialog = HostKeyAcceptDialog(self.application, hostname, key) # pylint: disable=redefined-variable-type
 			if dialog.interact() != Gtk.ResponseType.ACCEPT:
 				raise errors.KingPhisherAbortError('unknown ssh host key for ' + hostname)
 			host_keys.add(hostname, key.get_name(), key)

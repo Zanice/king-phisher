@@ -310,7 +310,7 @@ class KingPhisherRequestHandlerRPC(object):
 
 	@log_call
 	@database_access
-	def rpc_campaign_message_new(self, session, campaign_id, email_id, target_email, first_name, last_name, department_name=None):
+	def rpc_campaign_message_new(self, session, campaign_id, email_id, target_email, first_name, last_name, department_name=None): # pylint: disable=too-many-arguments
 		"""
 		Record a message that has been sent as part of a campaign. These
 		details can be retrieved later for value substitution in template
@@ -413,7 +413,7 @@ class KingPhisherRequestHandlerRPC(object):
 		row = db_manager.get_row_by_id(session, table, row_id)
 		if row is None:
 			logger = logging.getLogger('KingPhisher.Server.API.RPC')
-			logger.debug("received delete request for non existing row with id {0} from table {1}".format(row_id, table_name))
+			logger.debug("received delete request for non existing row with id {0} from table {1}".format(row_id, table_name)) # pylint: disable=logging-format-interpolation
 			return
 		row.assert_session_has_permissions('d', self.rpc_session)
 		session.delete(row)
@@ -562,16 +562,16 @@ class KingPhisherRequestHandlerRPC(object):
 	def rpc_login(self, session, username, password, otp=None):
 		logger = logging.getLogger('KingPhisher.Server.Authentication')
 		if not ipaddress.ip_address(self.client_address[0]).is_loopback:
-			logger.warning("failed login request from {0} for user {1}, (invalid source address)".format(self.client_address[0], username))
+			logger.warning("failed login request from {0} for user {1}, (invalid source address)".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
 			raise ValueError('invalid source address for login')
 		fail_default = (False, ConnectionErrorReason.ERROR_INVALID_CREDENTIALS, None)
 		fail_otp = (False, ConnectionErrorReason.ERROR_INVALID_OTP, None)
 
 		if not (username and password):
-			logger.warning("failed login request from {0} for user {1}, (missing username or password)".format(self.client_address[0], username))
+			logger.warning("failed login request from {0} for user {1}, (missing username or password)".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
 			return fail_default
 		if not self.server.forked_authenticator.authenticate(username, password):
-			logger.warning("failed login request from {0} for user {1}, (authentication failed)".format(self.client_address[0], username))
+			logger.warning("failed login request from {0} for user {1}, (authentication failed)".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
 			return fail_default
 
 		user = db_manager.get_row_by_id(session, db_models.User, username)
@@ -582,17 +582,17 @@ class KingPhisherRequestHandlerRPC(object):
 			session.commit()
 		elif user.otp_secret:
 			if otp is None:
-				logger.debug("failed login request from {0} for user {1}, (missing otp)".format(self.client_address[0], username))
+				logger.debug("failed login request from {0} for user {1}, (missing otp)".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
 				return fail_otp
 			if not (isinstance(otp, str) and len(otp) == 6 and otp.isdigit()):
-				logger.warning("failed login request from {0} for user {1}, (invalid otp)".format(self.client_address[0], username))
+				logger.warning("failed login request from {0} for user {1}, (invalid otp)".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
 				return fail_otp
 			totp = pyotp.TOTP(user.otp_secret)
 			now = datetime.datetime.now()
 			if not otp in (totp.at(now + datetime.timedelta(seconds=offset)) for offset in (0, -30, 30)):
-				logger.warning("failed login request from {0} for user {1}, (invalid otp)".format(self.client_address[0], username))
+				logger.warning("failed login request from {0} for user {1}, (invalid otp)".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
 				return fail_otp
-		logger.info("successful login request from {0} for user {1}".format(self.client_address[0], username))
+		logger.info("successful login request from {0} for user {1}".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
 		return True, ConnectionErrorReason.SUCCESS, self.server.session_manager.put(username)
 
 	@log_call
@@ -600,4 +600,4 @@ class KingPhisherRequestHandlerRPC(object):
 		username = self.rpc_session.user
 		self.server.session_manager.remove(self.rpc_session_id)
 		logger = logging.getLogger('KingPhisher.Server.Authentication')
-		logger.info("successful logout request from {0} for user {1}".format(self.client_address[0], username))
+		logger.info("successful logout request from {0} for user {1}".format(self.client_address[0], username)) # pylint: disable=logging-format-interpolation
